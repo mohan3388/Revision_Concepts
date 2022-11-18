@@ -1,5 +1,7 @@
 ﻿namespace Encapsulation
 {
+
+
     public class student
     {
         public int Id { get; set; }
