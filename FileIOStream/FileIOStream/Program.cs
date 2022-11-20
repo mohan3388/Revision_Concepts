@@ -3,6 +3,7 @@
     class Test
     {
         string path = @"G:\RIvisionConcept\Revision_Concepts\FileIOStream\FileIOStream\TextFile.txt";
+        string copypath = @"G:\RIvisionConcept\Revision_Concepts\FileIOStream\FileIOStream\TextCopy.txt";
         string[] lines;
         public void Readtext()
         {
@@ -10,7 +11,12 @@
             for (int i = 0; i < lines.Length; i++) {
                 Console.WriteLine(lines[i]);
             }
-            Console.ReadKey();
+           
+        }
+        public void CopyFiles()
+        {
+            File.Copy(path, copypath);
+           
         }
     }
     class Program
@@ -18,7 +24,8 @@
         public static void Main()
         {
             Test test = new Test();
-            test.Readtext();
+            test.CopyFiles();
+           //test.Readtext();
         }
     }
 }
