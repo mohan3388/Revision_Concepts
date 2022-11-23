@@ -78,5 +78,64 @@ namespace RepositoryLayer.Service
                 throw;
             }
     }
+        public AddressBookModel UpdateaddressBook(long Id,AddressBookModel model)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionString);
+            try
+            {
+                SqlCommand command = new SqlCommand("SpUpdateAddressBook", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@Id", Id);
+                command.Parameters.AddWithValue("@FirstName", model.FirstName);
+                command.Parameters.AddWithValue("@LastName", model.LastName);
+                command.Parameters.AddWithValue("@Email", model.Email);
+                command.Parameters.AddWithValue("@Mobile", model.Mobile);
+                command.Parameters.AddWithValue("@Address", model.Address);
+                command.Parameters.AddWithValue("@City", model.City);
+                command.Parameters.AddWithValue("@State", model.State);
+                command.Parameters.AddWithValue("@Pincode", model.Pincode);
+                connection.Open();
+                var result = command.ExecuteNonQuery();
+                connection.Close();
+                if (result != null)
+                {
+                    return model;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public bool DeleteAddressBook(long Id)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionString);
+            try
+            {
+                SqlCommand command = new SqlCommand("SpDeleteAddressBook", connection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@Id",Id);
+                connection.Open();
+                var result = command.ExecuteNonQuery();
+                connection.Close();
+                if (result != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }
