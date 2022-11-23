@@ -36,7 +36,7 @@ namespace SerializeAndDeserializes
     //        Console.WriteLine(JsonData);
     //     }
     //}
-    //    [DataContract]
+     // [DataContract]
     //    public class blogSite
     //    {
     //        [DataMember]

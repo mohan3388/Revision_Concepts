@@ -62,3 +62,33 @@ insert into UserTable values('raj','verma','bera','kawardha');
 
 
 select * from Userdata
+select * from AddressBook
+
+create table AddressBook(
+Id int primary key Identity(1,1),
+FirstName varchar(255),
+LastName varchar(255),
+Email varchar(255),
+Mobile varchar(255),
+Address varchar(255),
+City varchar(255),
+State varchar(255),
+Pincode varchar(255)
+)
+
+alter procedure SpAddressBook(
+@FirstName varchar(255),
+@LastName varchar(255),
+@Email varchar(255),
+@Mobile varchar(255),
+@Address varchar(255),
+@City varchar(255),
+@State varchar(255),
+@Pincode varchar(255)
+)
+as
+begin
+insert into AddressBook values(@FirstName,@LastName,@Email,@Mobile,@Address,@City,@State,@Pincode)
+end
+
+
