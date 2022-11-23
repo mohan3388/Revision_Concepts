@@ -98,7 +98,9 @@ begin
 select * from AddressBook
 end
 
-create procedure SpUpdateAddressBook(
+
+
+create procedure SpDeleteAddressBook(
 @Id int,
 @FirstName varchar(255),
 @LastName varchar(255),
@@ -112,4 +114,32 @@ create procedure SpUpdateAddressBook(
 as
 begin
 update AddressBook set FirstName=@FirstName, LastName=@LastName, Email=@Email, Mobile=@Mobile, Address=@Address, City=@City, State=@State, Pincode=@Pincode where Id=@Id;
+end
+
+
+create procedure SpDeleteAddressBook(
+@Id int
+)
+as
+begin
+delete from AddressBook where Id=@Id;
+end
+
+create table UserRegister(
+Id int primary key Identity(1,1),
+FirstName varchar(255),
+LastName varchar(255),
+Email varchar(255),
+Password varchar(255)
+)
+
+create procedure SpUserRegister(
+@FirstName varchar(255),
+@LastName varchar(255),
+@Email varchar(255),
+@Password varchar(255)
+)
+as
+begin
+insert into UserRegister values(@FirstName,@LastName,@Email,@Password)
 end
