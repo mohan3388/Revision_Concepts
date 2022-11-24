@@ -1,5 +1,6 @@
 using BusinessLayer.Interface;
 using BusinessLayer.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -8,12 +9,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AddressBookFinal
@@ -35,16 +38,50 @@ namespace AddressBookFinal
             services.AddTransient<IAddressBookBL, AddressBookBL>();
             services.AddTransient<IUserBL, UserBL>();
             services.AddTransient<IUserRL, UserRL>();
-            services.AddSwaggerGen();
-            services.AddSwaggerGen(c =>
+            services.AddAuthentication(x =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
                 {
-                    Version = "v1",
-                    Title = "Implement Swagger UI",
-                    Description = "A simple example to Implement Swagger UI",
-                });
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("THIS_IS_MY_KEY_TO_GENERATE_TOKEN")),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+
+                };
             });
+            services.AddSwaggerGen(
+             setup =>
+             {
+                 // Include 'SecurityScheme' to use JWT Authentication
+                 var jwtSecurityScheme = new OpenApiSecurityScheme
+                 {
+                     Scheme = "bearer",
+                     BearerFormat = "JWT",
+                     Name = "JWT Authentication",
+                     In = ParameterLocation.Header,
+                     Type = SecuritySchemeType.Http,
+                     Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+                     Reference = new OpenApiReference
+                     {
+                         Id = JwtBearerDefaults.AuthenticationScheme,
+                         Type = ReferenceType.SecurityScheme
+                     }
+                 };
+                 setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+                 setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+             {
+                    { jwtSecurityScheme, Array.Empty<string>() }
+             });
+
+             }
+                 );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +97,8 @@ namespace AddressBookFinal
             app.UseRouting();
 
             app.UseAuthorization();
-
+           
+            app.UseAuthentication();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

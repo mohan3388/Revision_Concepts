@@ -35,5 +35,25 @@ namespace AddressBookFinal.Controllers
                 throw;
             }
         }
+        [HttpPost("Login")]
+        public IActionResult UserLogin(LoginModel model)
+        {
+            try
+            {
+                var result = userBL.UserLogin(model);
+                if (result != null)
+                {
+                    return Ok(new { success = true, message = "login successfully", data = result });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = "failed" });
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

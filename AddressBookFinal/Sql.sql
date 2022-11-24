@@ -143,3 +143,11 @@ as
 begin
 insert into UserRegister values(@FirstName,@LastName,@Email,@Password)
 end
+
+alter procedure SpUserselect(
+@Email varchar(255)
+)
+as
+begin
+select * from UserRegister where Email=@Email;
+end
