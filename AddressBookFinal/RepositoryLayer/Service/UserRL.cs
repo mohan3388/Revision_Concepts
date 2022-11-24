@@ -64,7 +64,7 @@ namespace RepositoryLayer.Service
                 SqlDataReader Dr = cmd.ExecuteReader();
                 while (Dr.Read())
                 {
-                    string Name = Convert.ToString(Dr["FirstName"]);
+                    string FirstName = Convert.ToString(Dr["FirstName"]);
                     string Email = Convert.ToString(Dr["Email"]);
                     Id = Convert.ToInt32(Dr["Id"]);
                     Password = Convert.ToString(Dr["Password"]);
@@ -117,6 +117,44 @@ namespace RepositoryLayer.Service
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+        public string ForgetPassword(string Email)
+        {
+            SqlConnection connection = new SqlConnection(ConnectionString);
+            try
+            {
+                long Id = 0;
+                SqlCommand cmd = new SqlCommand("SpForgetPassword", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Email", Email);
+                connection.Open();
+                var result = cmd.ExecuteNonQuery();
+                SqlDataReader sqlData = cmd.ExecuteReader();
+                ForgetPasswordModel forgetPass = new ForgetPasswordModel();
+                // UserRegisterModel userRegisterModels = new UserRegisterModel();
+                if (sqlData.Read())
+                {
+                    forgetPass.Id = sqlData.GetInt32("Id");
+                    forgetPass.Email = sqlData.GetString("Email");
+                    forgetPass.FirstName = sqlData.GetString("FirstName");
+                    forgetPass.LastName = sqlData.GetString("LastName");
+                }
+                if (forgetPass.Email != null)
+                {
+                    MSMQModel mSMQModel = new MSMQModel();
+                    var token = GenerateJWTToken(Email, Id);
+                    mSMQModel.sendData2Queue(token);
+                    return token.ToString();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }

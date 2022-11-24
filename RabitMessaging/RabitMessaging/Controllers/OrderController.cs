@@ -17,7 +17,7 @@ namespace RabitMessaging.Controllers
         {
             _bus = bus;
         }
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> CreateOrder(Order order)
         {
             Uri uri = new Uri("rabbitmq://localhost/order_queue");
