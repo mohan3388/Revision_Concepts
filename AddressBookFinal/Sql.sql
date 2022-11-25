@@ -151,3 +151,29 @@ as
 begin
 select * from UserRegister where Email=@Email;
 end
+
+
+create procedure SpForgetPassword(
+@Email varchar(255)
+)
+as
+begin
+select * from UserRegister where Email=@Email;
+end
+
+create procedure SpResetPassword(
+@Email varchar(255)
+)
+as
+begin
+select * from UserRegister where Email=@Email;
+end
+
+create procedure ResetPassword(
+@Email varchar(255),
+@Password varchar(255)
+)
+as
+begin
+update UserRegister set Password=@Password where Email=@Email
+end
