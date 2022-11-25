@@ -2,7 +2,13 @@
 using CommonLayer.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AddressBookFinal.Controllers
 {
@@ -11,9 +17,11 @@ namespace AddressBookFinal.Controllers
     public class UserController : ControllerBase
     {
         public IUserBL userBL;
+      
         public UserController(IUserBL userBL)
         {
             this.userBL = userBL;
+           
         }
         [HttpPost("Register")]
         public IActionResult userRegister(RegisterModel model)
@@ -83,7 +91,7 @@ namespace AddressBookFinal.Controllers
                 var result = userBL.ResetPassword(Email,resetModel);
                 if (result != null)
                 {
-                    return Ok(new { success = true, message = "sent successfully", data = result });
+                    return Ok(new { success = true, message = "reset pass successfully"});
                 }
                 else
                 {
@@ -95,5 +103,6 @@ namespace AddressBookFinal.Controllers
                 throw;
             }
         }
+      
     }
 }

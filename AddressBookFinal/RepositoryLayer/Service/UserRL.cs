@@ -30,7 +30,7 @@ namespace RepositoryLayer.Service
                 command.Parameters.AddWithValue("@FirstName", userRegister.FirstName);
                 command.Parameters.AddWithValue("@LastName", userRegister.LastName);
                 command.Parameters.AddWithValue("@Email", userRegister.Email);
-                command.Parameters.AddWithValue("@Password",userRegister.Password);
+                command.Parameters.AddWithValue("@Password", Encrypt_Password(userRegister.Password));
                 connection.Open();
                 var result = command.ExecuteNonQuery();
                 connection.Close();
@@ -72,7 +72,7 @@ namespace RepositoryLayer.Service
 
                 }
                 sqlConnection.Close();
-                var pass = Password;
+                var pass = Decrypt_Password(Password);
                 // var email = userLogin.Email;
                 if (pass == userLogin.Password)
                 {
@@ -168,7 +168,7 @@ namespace RepositoryLayer.Service
                 if (resetModel.Password == resetModel.ConfirmPassword)
                 {
                     cmd.Parameters.AddWithValue("@Email", Email);
-                    cmd.Parameters.AddWithValue("@Password", resetModel.Password);
+                    cmd.Parameters.AddWithValue("@Password", Encrypt_Password(resetModel.Password));
                 }
                 connection.Open();
                 var result = cmd.ExecuteNonQuery();
@@ -186,6 +186,26 @@ namespace RepositoryLayer.Service
             {
                 throw;
             }
+        }
+        private string Decrypt_Password(string encryptpassword)
+        {
+            string pswstr = string.Empty;
+            System.Text.UTF8Encoding encode_psw = new System.Text.UTF8Encoding();
+            System.Text.Decoder Decode = encode_psw.GetDecoder();
+            byte[] todecode_byte = Convert.FromBase64String(encryptpassword);
+            int charCount = Decode.GetCharCount(todecode_byte, 0, todecode_byte.Length);
+            char[] decoded_char = new char[charCount];
+            Decode.GetChars(todecode_byte, 0, todecode_byte.Length, decoded_char, 0);
+            pswstr = new String(decoded_char);
+            return pswstr;
+        }
+        private string Encrypt_Password(string password)
+        {
+            string pswstr = string.Empty;
+            byte[] psw_encode = new byte[password.Length];
+            psw_encode = System.Text.Encoding.UTF8.GetBytes(password);
+            pswstr = Convert.ToBase64String(psw_encode);
+            return pswstr;
         }
     }
 }
